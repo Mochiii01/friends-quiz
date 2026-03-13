@@ -4,189 +4,177 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>How Well Do Your Friends Know You?</title>
+
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background: #f0f8ff;
-    margin: 0;
-    padding: 20px;
-  }
-  .quiz-container {
-    background: white;
-    max-width: 400px;
-    margin: 30px auto;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  }
-  input[type=text] {
-    padding: 10px;
-    font-size: 16px;
-    width: 80%;
-    margin: 10px 0;
-  }
-  button {
-    margin: 10px;
-    padding: 12px 25px;
-    font-size: 16px;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    background-color: #4CAF50;
-    color: white;
-  }
-  #score-display {
-    font-weight: bold;
-    font-size: 22px;
-    margin: 15px;
-  }
-  #records {
-    text-align: left;
-    margin-top: 20px;
-  }
-  #records li {
-    margin-bottom: 5px;
-  }
+body{
+  font-family: Arial;
+  text-align:center;
+  background:#f0f8ff;
+}
+
+.quiz-container{
+  background:white;
+  width:400px;
+  margin:30px auto;
+  padding:20px;
+  border-radius:10px;
+  box-shadow:0 0 10px rgba(0,0,0,0.2);
+}
+
+input{
+  padding:10px;
+  width:80%;
+  font-size:16px;
+}
+
+button{
+  margin:10px;
+  padding:12px 20px;
+  font-size:16px;
+  border:none;
+  border-radius:5px;
+  background:#4CAF50;
+  color:white;
+  cursor:pointer;
+}
+
+#score-display{
+  font-size:22px;
+  font-weight:bold;
+}
 </style>
+
 </head>
+
 <body>
 
 <h1>How Well Do Your Friends Know You?</h1>
+
 <div class="quiz-container" id="container">
-  <input type="text" id="playerName" placeholder="Enter your name"><br>
-  <button id="startBtn">Start Quiz</button>
+
+<input type="text" id="playerName" placeholder="Enter your name"><br>
+
+<button onclick="startQuiz()">Start Quiz</button>
+
 </div>
 
 <script>
+
 const quizData = [
-  { question: "What is my favorite color?", choices:["Red","Blue","Green","Yellow"], answer:"Blue" },
-  { question: "Do I like waking up early?", choices:["Yes","No"], answer:"Yes" },
-  { question: "Do I like drinking milk?", choices:["Yes","No"], answer:"Yes" },
-  { question: "Do I like exercising?", choices:["Yes","No"], answer:"No" },
-  { question: "Do I like sweets?", choices:["Yes","No"], answer:"Yes" },
-  { question: "Do I prefer cats or dogs?", choices:["Cats","Dogs"], answer:"Dogs" },
-  { question: "How much do I usually use my phone?", choices:["A lot","Moderate","Very little"], answer:"Moderate" },
-  { question: "Do I prefer being alone or in a crowd?", choices:["Alone","In a crowd"], answer:"Alone" },
-  { question: "What is my favorite fruit?", choices:["Apple","Banana","Orange","Grapes"], answer:"Apple" },
-  { question: "Do I like coffee?", choices:["Yes","No"], answer:"No" }
+
+{question:"What is my favorite color?",choices:["Red","Blue","Green","Yellow"],answer:"Blue"},
+
+{question:"Do I like waking up early?",choices:["Yes","No"],answer:"Yes"},
+
+{question:"Do I like drinking milk?",choices:["Yes","No"],answer:"Yes"},
+
+{question:"Do I like exercising?",choices:["Yes","No"],answer:"No"},
+
+{question:"Do I like sweets?",choices:["Yes","No"],answer:"Yes"},
+
+{question:"Do I prefer cats or dogs?",choices:["Cats","Dogs"],answer:"Dogs"},
+
+{question:"How much do I usually use my phone?",choices:["A lot","Moderate","Very little"],answer:"Moderate"},
+
+{question:"Do I prefer being alone or in a crowd?",choices:["Alone","In a crowd"],answer:"Alone"},
+
+{question:"What is my favorite fruit?",choices:["Apple","Banana","Orange","Grapes"],answer:"Apple"},
+
+{question:"Do I like coffee?",choices:["Yes","No"],answer:"No"}
+
 ];
 
 let currentQuestion = 0;
-let totalScore = 0;
+let score = 0;
 let playerName = "";
-let records = [];
 
-window.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("startBtn").addEventListener("click", startQuiz);
+function startQuiz(){
+
+const name = document.getElementById("playerName").value;
+
+if(name===""){
+alert("Please enter your name");
+return;
+}
+
+playerName = name;
+score = 0;
+currentQuestion = 0;
+
+showQuestion();
+
+}
+
+function showQuestion(){
+
+const q = quizData[currentQuestion];
+
+const container = document.getElementById("container");
+
+container.innerHTML = "<h2>"+q.question+"</h2>";
+
+q.choices.forEach(choice=>{
+
+let btn = document.createElement("button");
+
+btn.innerText = choice;
+
+btn.onclick = function(){
+
+if(choice===q.answer){
+
+score++;
+
+}
+
+nextQuestion();
+
+}
+
+container.appendChild(btn);
+
 });
 
-function startQuiz() {
-  const nameInput = document.getElementById("playerName");
-  if (!nameInput.value.trim()) {
-    alert("Please enter your name!");
-    return;
-  }
-  playerName = nameInput.value.trim();
-  totalScore = 0;
-  currentQuestion = 0;
-  showQuestion();
 }
 
-function showQuestion() {
-  const q = quizData[currentQuestion];
-  const container = document.getElementById("container");
-  container.innerHTML = "";
-  const questionP = document.createElement("p");
-  questionP.textContent = q.question;
-  container.appendChild(questionP);
+function nextQuestion(){
 
-  const choicesDiv = document.createElement("div");
-  container.appendChild(choicesDiv);
+currentQuestion++;
 
-  q.choices.forEach(choice => {
-    const btn = document.createElement("button");
-    btn.textContent = choice;
-    btn.onclick = () => {
-      if(choice === q.answer) totalScore++;
-      nextBtn.style.display = "inline-block";
-    };
-    choicesDiv.appendChild(btn);
-  });
+if(currentQuestion<quizData.length){
 
-  const nextBtn = document.createElement("button");
-  nextBtn.textContent = "Next";
-  nextBtn.style.display = "none";
-  nextBtn.onclick = nextQuestion;
-  container.appendChild(nextBtn);
+showQuestion();
+
+}else{
+
+showResult();
+
 }
 
-function nextQuestion() {
-  currentQuestion++;
-  if(currentQuestion < quizData.length){
-    showQuestion();
-  } else {
-    showResult();
-  }
 }
 
-function showResult() {
-  let color = totalScore <= 3 ? "red" : (totalScore <= 7 ? "orange" : "green");
-  records.push({name: playerName, score: totalScore});
+function showResult(){
 
-  const container = document.getElementById("container");
-  container.innerHTML = "";
-  
-  const h2 = document.createElement("h2");
-  h2.textContent = "Quiz Completed!";
-  container.appendChild(h2);
-  const scoreP = document.createElement("p");
-  scoreP.id = "score-display";
-  scoreP.style.color = color;
-  scoreP.textContent = ${playerName}: ${totalScore} / ${quizData.length} points;
-  container.appendChild(scoreP);
+const container = document.getElementById("container");
 
-  const restartBtn = document.createElement("button");
-  restartBtn.textContent = "Return Home";
-  restartBtn.onclick = restartQuiz;
-  container.appendChild(restartBtn);
+container.innerHTML = "<h2>Quiz Finished!</h2>";
 
-  const selfBtn = document.createElement("button");
-  selfBtn.textContent = "Take it Myself";
-  selfBtn.onclick = startQuiz;
-  container.appendChild(selfBtn);
+container.innerHTML += "<p id='score-display'>"+playerName+" scored "+score+" / "+quizData.length+"</p>";
 
-  const recordsTitle = document.createElement("h3");
-  recordsTitle.textContent = "All Records:";
-  container.appendChild(recordsTitle);
+let restart = document.createElement("button");
 
-  const ul = document.createElement("ul");
-  ul.id = "records";
-  container.appendChild(ul);
+restart.innerText="Play Again";
 
-  records.forEach(r => {
-    const li = document.createElement("li");
-    li.textContent = ${r.name}: ${r.score} / ${quizData.length};
-    ul.appendChild(li);
-  });
+restart.onclick=function(){
+
+location.reload();
+
 }
 
-function restartQuiz() {
-  const container = document.getElementById("container");
-  container.innerHTML = "";
-  const input = document.createElement("input");
-  input.type = "text";
-  input.id = "playerName";
-  input.placeholder = "Enter your name";
-  container.appendChild(input);
-  container.appendChild(document.createElement("br"));
+container.appendChild(restart);
 
-  const startBtn = document.createElement("button");
-  startBtn.id = "startBtn";
-  startBtn.textContent = "Start Quiz";
-  startBtn.onclick = startQuiz;
-  container.appendChild(startBtn);
 }
+
 </script>
 
 </body>
