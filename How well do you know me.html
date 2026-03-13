@@ -54,13 +54,11 @@
 
 <h1>How Well Do Your Friends Know You?</h1>
 <div class="quiz-container" id="container">
-  <input type="text" id="playerName" placeholder="Enter your name">
-  <br>
+  <input type="text" id="playerName" placeholder="Enter your name"><br>
   <button id="startBtn">Start Quiz</button>
 </div>
 
 <script>
-// 题目数据
 const quizData = [
   { question: "What is my favorite color?", choices:["Red","Blue","Green","Yellow"], answer:"Blue" },
   { question: "Do I like waking up early?", choices:["Yes","No"], answer:"Yes" },
@@ -77,14 +75,12 @@ const quizData = [
 let currentQuestion = 0;
 let totalScore = 0;
 let playerName = "";
-let records = []; // 存储所有回答者
+let records = [];
 
-// DOM加载完成
 window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("startBtn").addEventListener("click", startQuiz);
 });
 
-// 开始测验
 function startQuiz() {
   const nameInput = document.getElementById("playerName");
   if (!nameInput.value.trim()) {
@@ -97,31 +93,34 @@ function startQuiz() {
   showQuestion();
 }
 
-// 显示题目
 function showQuestion() {
   const q = quizData[currentQuestion];
   const container = document.getElementById("container");
-  container.innerHTML = 
-    <p>${q.question}</p>
-    <div id="choices"></div>
-    <button id="nextBtn" style="display:none;">Next</button>
-  ;
+  container.innerHTML = "";
+  const questionP = document.createElement("p");
+  questionP.textContent = q.question;
+  container.appendChild(questionP);
 
-  const choicesDiv = document.getElementById("choices");
+  const choicesDiv = document.createElement("div");
+  container.appendChild(choicesDiv);
+
   q.choices.forEach(choice => {
     const btn = document.createElement("button");
     btn.textContent = choice;
     btn.onclick = () => {
       if(choice === q.answer) totalScore++;
-      document.getElementById("nextBtn").style.display = "inline-block";
+      nextBtn.style.display = "inline-block";
     };
     choicesDiv.appendChild(btn);
   });
 
-  document.getElementById("nextBtn").onclick = nextQuestion;
+  const nextBtn = document.createElement("button");
+  nextBtn.textContent = "Next";
+  nextBtn.style.display = "none";
+  nextBtn.onclick = nextQuestion;
+  container.appendChild(nextBtn);
 }
 
-// 下一题
 function nextQuestion() {
   currentQuestion++;
   if(currentQuestion < quizData.length){
@@ -131,41 +130,62 @@ function nextQuestion() {
   }
 }
 
-// 显示结果 + 记录
 function showResult() {
   let color = totalScore <= 3 ? "red" : (totalScore <= 7 ? "orange" : "green");
-  // 保存记录
   records.push({name: playerName, score: totalScore});
 
   const container = document.getElementById("container");
-  container.innerHTML = `
-  <h2>Quiz Completed!</h2>
-    <p id="score-display" style="color:${color}">${playerName}: ${totalScore} / ${quizData.length} points</p>
-    <button id="restartBtn">Return Home</button>
-    <button id="selfBtn">Take it Myself</button>
-    <h3>All Records:</h3>
-    <ul id="records"></ul>
-  ;
+  container.innerHTML = "";
+  
+  const h2 = document.createElement("h2");
+  h2.textContent = "Quiz Completed!";
+  container.appendChild(h2);
+  const scoreP = document.createElement("p");
+  scoreP.id = "score-display";
+  scoreP.style.color = color;
+  scoreP.textContent = ${playerName}: ${totalScore} / ${quizData.length} points;
+  container.appendChild(scoreP);
 
-  const recordsList = document.getElementById("records");
+  const restartBtn = document.createElement("button");
+  restartBtn.textContent = "Return Home";
+  restartBtn.onclick = restartQuiz;
+  container.appendChild(restartBtn);
+
+  const selfBtn = document.createElement("button");
+  selfBtn.textContent = "Take it Myself";
+  selfBtn.onclick = startQuiz;
+  container.appendChild(selfBtn);
+
+  const recordsTitle = document.createElement("h3");
+  recordsTitle.textContent = "All Records:";
+  container.appendChild(recordsTitle);
+
+  const ul = document.createElement("ul");
+  ul.id = "records";
+  container.appendChild(ul);
+
   records.forEach(r => {
     const li = document.createElement("li");
     li.textContent = ${r.name}: ${r.score} / ${quizData.length};
-    recordsList.appendChild(li);
+    ul.appendChild(li);
   });
-
-  document.getElementById("restartBtn").addEventListener("click", restartQuiz);
-  document.getElementById("selfBtn").addEventListener("click", startQuiz);
 }
 
-// 回到主页
 function restartQuiz() {
   const container = document.getElementById("container");
-  container.innerHTML = 
-    <input type="text" id="playerName" placeholder="Enter your name"><br>
-    <button id="startBtn">Start Quiz</button>
-  `;
-  document.getElementById("startBtn").addEventListener("click", startQuiz);
+  container.innerHTML = "";
+  const input = document.createElement("input");
+  input.type = "text";
+  input.id = "playerName";
+  input.placeholder = "Enter your name";
+  container.appendChild(input);
+  container.appendChild(document.createElement("br"));
+
+  const startBtn = document.createElement("button");
+  startBtn.id = "startBtn";
+  startBtn.textContent = "Start Quiz";
+  startBtn.onclick = startQuiz;
+  container.appendChild(startBtn);
 }
 </script>
 
