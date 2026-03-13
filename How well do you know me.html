@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Well Do Your Friends Know You?</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #f0f8ff;
+    margin: 0;
+    padding: 20px;
+  }
+  .quiz-container {
+    background: white;
+    max-width: 400px;
+    margin: 30px auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  }
+  input[type=text] {
+    padding: 10px;
+    font-size: 16px;
+    width: 80%;
+    margin: 10px 0;
+  }
+  button {
+    margin: 10px;
+    padding: 12px 25px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+  }
+  #score-display {
+    font-weight: bold;
+    font-size: 22px;
+    margin: 15px;
+  }
+  #records {
+    text-align: left;
+    margin-top: 20px;
+  }
+  #records li {
+    margin-bottom: 5px;
+  }
+</style>
+</head>
+<body>
+
+<h1>How Well Do Your Friends Know You?</h1>
+<div class="quiz-container" id="container">
+  <input type="text" id="playerName" placeholder="Enter your name">
+  <br>
+  <button id="startBtn">Start Quiz</button>
+</div>
+
+<script>
+// 题目数据
+const quizData = [
+  { question: "What is my favorite color?", choices:["Red","Blue","Green","Yellow"], answer:"Blue" },
+  { question: "Do I like waking up early?", choices:["Yes","No"], answer:"Yes" },
+  { question: "Do I like drinking milk?", choices:["Yes","No"], answer:"Yes" },
+  { question: "Do I like exercising?", choices:["Yes","No"], answer:"No" },
+  { question: "Do I like sweets?", choices:["Yes","No"], answer:"Yes" },
+  { question: "Do I prefer cats or dogs?", choices:["Cats","Dogs"], answer:"Dogs" },
+  { question: "How much do I usually use my phone?", choices:["A lot","Moderate","Very little"], answer:"Moderate" },
+  { question: "Do I prefer being alone or in a crowd?", choices:["Alone","In a crowd"], answer:"Alone" },
+  { question: "What is my favorite fruit?", choices:["Apple","Banana","Orange","Grapes"], answer:"Apple" },
+  { question: "Do I like coffee?", choices:["Yes","No"], answer:"No" }
+];
+
+let currentQuestion = 0;
+let totalScore = 0;
+let playerName = "";
+let records = []; // 存储所有回答者
+
+// DOM加载完成
+window.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("startBtn").addEventListener("click", startQuiz);
+});
+
+// 开始测验
+function startQuiz() {
+  const nameInput = document.getElementById("playerName");
+  if (!nameInput.value.trim()) {
+    alert("Please enter your name!");
+    return;
+  }
+  playerName = nameInput.value.trim();
+  totalScore = 0;
+  currentQuestion = 0;
+  showQuestion();
+}
+
+// 显示题目
+function showQuestion() {
+  const q = quizData[currentQuestion];
+  const container = document.getElementById("container");
+  container.innerHTML = 
+    <p>${q.question}</p>
+    <div id="choices"></div>
+    <button id="nextBtn" style="display:none;">Next</button>
+  ;
+
+  const choicesDiv = document.getElementById("choices");
+  q.choices.forEach(choice => {
+    const btn = document.createElement("button");
+    btn.textContent = choice;
+    btn.onclick = () => {
+      if(choice === q.answer) totalScore++;
+      document.getElementById("nextBtn").style.display = "inline-block";
+    };
+    choicesDiv.appendChild(btn);
+  });
+
+  document.getElementById("nextBtn").onclick = nextQuestion;
+}
+
+// 下一题
+function nextQuestion() {
+  currentQuestion++;
+  if(currentQuestion < quizData.length){
+    showQuestion();
+  } else {
+    showResult();
+  }
+}
+
+// 显示结果 + 记录
+function showResult() {
+  let color = totalScore <= 3 ? "red" : (totalScore <= 7 ? "orange" : "green");
+  // 保存记录
+  records.push({name: playerName, score: totalScore});
+
+  const container = document.getElementById("container");
+  container.innerHTML = `
+  <h2>Quiz Completed!</h2>
+    <p id="score-display" style="color:${color}">${playerName}: ${totalScore} / ${quizData.length} points</p>
+    <button id="restartBtn">Return Home</button>
+    <button id="selfBtn">Take it Myself</button>
+    <h3>All Records:</h3>
+    <ul id="records"></ul>
+  ;
+
+  const recordsList = document.getElementById("records");
+  records.forEach(r => {
+    const li = document.createElement("li");
+    li.textContent = ${r.name}: ${r.score} / ${quizData.length};
+    recordsList.appendChild(li);
+  });
+
+  document.getElementById("restartBtn").addEventListener("click", restartQuiz);
+  document.getElementById("selfBtn").addEventListener("click", startQuiz);
+}
+
+// 回到主页
+function restartQuiz() {
+  const container = document.getElementById("container");
+  container.innerHTML = 
+    <input type="text" id="playerName" placeholder="Enter your name"><br>
+    <button id="startBtn">Start Quiz</button>
+  `;
+  document.getElementById("startBtn").addEventListener("click", startQuiz);
+}
+</script>
+
+</body>
+</html>
